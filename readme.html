@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Pro Downloader - Readme</title>
+    <title>YouTube Pro İndirici - Kullanım Kılavuzu</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,177 +14,117 @@
             padding: 20px;
             background-color: #f9f9f9;
         }
-        .lang-btn {
-            background-color: #ddd;
-            border: none;
-            padding: 10px 20px;
-            margin-right: 10px;
-            cursor: pointer;
+        h1 {
+            color: #d32f2f;
+            border-bottom: 2px solid #d32f2f;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #1976d2;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+            padding-left: 10px;
+        }
+        ul {
+            list-style-type: square;
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        code {
+            background-color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 4px;
             font-weight: bold;
+            color: #d32f2f;
+        }
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
             border-radius: 5px;
-            font-size: 16px;
+            margin: 15px 0;
         }
-        .lang-btn:hover {
-            background-color: #ccc;
+        .keyboard-shortcut {
+            font-weight: bold;
+            color: #333;
         }
-        .lang-btn.active {
-            background-color: #1976d2;
-            color: white;
-        }
-        .content-section {
-            display: none; /* Varsayılan olarak gizle */
-            margin-top: 20px;
-            padding: 20px;
-            background-color: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        /* Başlıklar ve Renkler */
-        h1 { color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px; }
-        h2 { color: #1976d2; margin-top: 30px; }
-        h3 { color: #388e3c; border-left: 4px solid #388e3c; padding-left: 10px; }
-        ul { list-style-type: square; margin-left: 20px; }
-        code { background-color: #e0e0e0; padding: 2px 5px; border-radius: 4px; font-weight: bold; color: #d32f2f; }
-        .note { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 15px; border-radius: 5px; margin: 15px 0; }
-        .keyboard-shortcut { font-weight: bold; color: #333; }
     </style>
-    <script>
-        function showLang(lang) {
-            // Tüm içerikleri gizle
-            document.getElementById('content-tr').style.display = 'none';
-            document.getElementById('content-en').style.display = 'none';
-            
-            // Buton aktifliklerini temizle
-            document.getElementById('btn-tr').classList.remove('active');
-            document.getElementById('btn-en').classList.remove('active');
-
-            // Seçileni göster
-            document.getElementById('content-' + lang).style.display = 'block';
-            document.getElementById('btn-' + lang).classList.add('active');
-            
-            // HTML dil etiketini güncelle (NVDA için önemli)
-            document.documentElement.lang = lang;
-        }
-
-        // Sayfa açılınca tarayıcı diline göre otomatik seç
-        window.onload = function() {
-            var userLang = navigator.language || navigator.userLanguage; 
-            if (userLang.startsWith('tr')) {
-                showLang('tr');
-            } else {
-                showLang('en');
-            }
-        };
-    </script>
 </head>
 <body>
 
-    <div role="navigation" aria-label="Language Selection">
-        <button id="btn-tr" class="lang-btn" onclick="showLang('tr')">Türkçe</button>
-        <button id="btn-en" class="lang-btn" onclick="showLang('en')">English</button>
+    <h1>YouTube Pro İndirici - Kullanım Kılavuzu</h1>
+    <p>Bu eklenti, NVDA kullanıcılarının YouTube üzerinde arama yapmasına, video veya oynatma listesi linklerini işlemesine, içerikleri oynatmasına ve diledikleri formatta (MP3/MP4) indirmesine olanak tanır. Ayrıca yerel bir oynatma listesi yöneticisi içerir.</p>
+
+    <h2>1. Başlarken</h2>
+    <p>Eklentiyi yükledikten sonra arayüze iki şekilde ulaşabilirsiniz:</p>
+    <ul>
+        <li><strong>NVDA Araçlar Menüsü:</strong> NVDA menüsünü açın, <em>Araçlar</em> alt menüsüne gidin ve <em>YouTube Pro İndirici</em> seçeneğine tıklayın.</li>
+        <li><strong>Kısayol Tuşu:</strong> NVDA Girdi Hareketleri menüsünden bu eklenti için özel bir kısayol atayabilirsiniz (Varsayılan bir kısayol atanmamıştır).</li>
+    </ul>
+
+    <div class="note">
+        <strong>Önemli Not:</strong> MP3 dönüştürme işlemleri için eklenti klasöründeki <code>lib/ffmpeg</code> yolunda <em>ffmpeg.exe</em> ve <em>ffprobe.exe</em> dosyalarının bulunması gerekir.
     </div>
 
-    <div id="content-tr" class="content-section" lang="tr">
-        <h1>YouTube Pro İndirici - Kullanım Kılavuzu</h1>
-        <p>Bu eklenti, NVDA kullanıcılarının YouTube üzerinde arama yapmasına, video veya oynatma listesi linklerini işlemesine, içerikleri oynatmasına ve diledikleri formatta (MP3/MP4) indirmesine olanak tanır. Ayrıca yerel bir oynatma listesi yöneticisi içerir.</p>
+    <h2>2. Sekmeler ve Özellikler</h2>
+    <p>Uygulama penceresi <strong>CTRL+TAB</strong> ile gezebileceğiniz 3 ana sekmeden oluşur:</p>
 
-        <h2>1. Başlarken</h2>
-        <p>Eklentiyi yükledikten sonra arayüze iki şekilde ulaşabilirsiniz:</p>
-        <ul>
-            <li><strong>NVDA Araçlar Menüsü:</strong> NVDA menüsünü açın, <em>Araçlar</em> alt menüsüne gidin ve <em>YouTube Pro İndirici</em> seçeneğine tıklayın.</li>
-            <li><strong>Kısayol Tuşu:</strong> NVDA Girdi Hareketleri menüsünden bu eklenti için özel bir kısayol atayabilirsiniz (Varsayılan bir kısayol atanmamıştır).</li>
-        </ul>
+    <h3>A. Ara ve İndir Sekmesi</h3>
+    <p>Bu sekme eklentinin ana merkezidir. Hem arama yapmak hem de doğrudan link yapıştırmak için kullanılır.</p>
+    <ul>
+        <li><strong>Arama veya Link Kutusu:</strong> Buraya bir arama terimi (örn: "Tarkan şarkıları") veya bir YouTube linki (Video veya Playlist URL'si) yapıştırıp <strong>Enter</strong>'a basın veya <em>Bul / Getir</em> butonuna tıklayın.</li>
+        <li><strong>Sonuç Listesi:</strong> Arama sonuçları veya linkin içeriği burada listelenir. Liste üzerinde gezinirken aşağıdaki kısayolları kullanabilirsiniz:</li>
+    </ul>
 
-        <div class="note">
-            <strong>Önemli Not:</strong> MP3 dönüştürme işlemleri için eklenti klasöründeki <code>lib/ffmpeg</code> yolunda <em>ffmpeg.exe</em> ve <em>ffprobe.exe</em> dosyalarının bulunması gerekir.
-        </div>
+    <h4>Liste Üzerindeki Kısayollar:</h4>
+    <ul>
+        <li><span class="keyboard-shortcut">F1:</span> Seçili içeriği <strong>Ses (MP3)</strong> olarak indirir.</li>
+        <li><span class="keyboard-shortcut">F2:</span> Seçili içeriği <strong>Video (MP4)</strong> olarak indirir.</li>
+        <li><span class="keyboard-shortcut">F3:</span> Seçili dosyanın indirme durumunu (yüzde ve hız) seslendirir.</li>
+        <li><span class="keyboard-shortcut">F4:</span> Seçili dosyanın indirilmesini <strong>İptal Eder</strong>.</li>
+        <li><span class="keyboard-shortcut">F5:</span> O an arka planda inmekte olan toplam dosya sayısını bildirir.</li>
+        <li><span class="keyboard-shortcut">ENTER (veya Çift Tık):</span> Seçili içeriği bilgisayarınızdaki varsayılan oynatıcıda açar (önizleme/izleme).</li>
+        <li><span class="keyboard-shortcut">Uygulama Tuşu (Sağ Tık):</span> Gelişmiş seçenekler menüsünü açar (Tarayıcıda aç, Playlist'e ekle vb.).</li>
+    </ul>
 
-        <h2>2. Sekmeler ve Özellikler</h2>
-        <p>Uygulama penceresi <strong>CTRL+TAB</strong> ile gezebileceğiniz 3 ana sekmeden oluşur:</p>
+    <h3>B. Oynatma Listeleri Sekmesi</h3>
+    <p>Kendi yerel kütüphanenizi oluşturabileceğiniz alandır. İki panelden oluşur:</p>
+    <ul>
+        <li><strong>Sol Panel (Listeler):</strong> Oluşturduğunuz oynatma listelerinin isimleri burada durur.
+            <ul>
+                <li><em>Yeni Liste Butonu:</em> Boş bir liste oluşturur.</li>
+                <li><em>Sağ Tık / Uygulama Tuşu:</em> Listeyi yeniden adlandırabilir (F2), silebilir (Delete) veya .m3u formatında dışa aktarabilirsiniz.</li>
+            </ul>
+        </li>
+        <li><strong>Sağ Panel (İçerik):</strong> Solda seçtiğiniz listenin içindeki videoları gösterir.
+            <ul>
+                <li><em>Oynat:</em> Seçili videoyu varsayılan oynatıcıda açar.</li>
+                <li><em>Sil (Delete):</em> Videoyu listeden kaldırır.</li>
+            </ul>
+        </li>
+    </ul>
+    <p><strong>İpucu:</strong> Arama sonuçlarında beğendiğiniz bir videoya sağ tıklayıp "Playlist'e Ekle" diyerek buraya gönderebilirsiniz.</p>
 
-        <h3>A. Ara ve İndir Sekmesi</h3>
-        <p>Bu sekme eklentinin ana merkezidir. Hem arama yapmak hem de doğrudan link yapıştırmak için kullanılır.</p>
-        <ul>
-            <li><strong>Arama veya Link Kutusu:</strong> Buraya bir arama terimi veya bir YouTube linki (Video/Playlist) yapıştırıp <strong>Enter</strong>'a basın veya <em>Bul / Getir</em> butonuna tıklayın.</li>
-            <li><strong>Sonuç Listesi:</strong> Arama sonuçları veya linkin içeriği burada listelenir.</li>
-        </ul>
+    <h3>C. Ayarlar Sekmesi</h3>
+    <p>Uygulamanın genel davranışlarını yapılandırdığınız yerdir.</p>
+    <ul>
+        <li><strong>İndirme Klasörü:</strong> Dosyaların nereye kaydedileceğini seçersiniz (Varsayılan: İndirilenler).</li>
+        <li><strong>Video Çözünürlüğü:</strong> İndirilecek videoların kalitesini belirler (En İyi, 1080p, 720p, 480p). Seçilen kalite videoda yoksa, mevcut olan en iyi kaliteyi indirir.</li>
+        <li><strong>Ses Kalitesi:</strong> MP3 dönüşüm kalitesini belirler (320 kbps, 192 kbps, 128 kbps).</li>
+        <li><strong>Arama Sonuç Limiti:</strong> Bir arama yaptığınızda kaç sonucun listeleneceğini belirler.</li>
+    </ul>
 
-        <h4>Liste Üzerindeki Kısayollar:</h4>
-        <ul>
-            <li><span class="keyboard-shortcut">F1:</span> Seçili içeriği <strong>Ses (MP3)</strong> olarak indirir.</li>
-            <li><span class="keyboard-shortcut">F2:</span> Seçili içeriği <strong>Video (MP4)</strong> olarak indirir.</li>
-            <li><span class="keyboard-shortcut">F3:</span> Seçili dosyanın indirme durumunu seslendirir.</li>
-            <li><span class="keyboard-shortcut">F4:</span> İndirmeyi <strong>İptal Eder</strong>.</li>
-            <li><span class="keyboard-shortcut">F5:</span> Aktif indirme sayısını bildirir.</li>
-            <li><span class="keyboard-shortcut">Uygulama Tuşu (Sağ Tık):</span> Gelişmiş seçenekler menüsünü açar (Tarayıcıda aç, Playlist'e ekle vb.).</li>
-        </ul>
-
-        <h3>B. Oynatma Listeleri Sekmesi</h3>
-        <p>Kendi yerel kütüphanenizi oluşturabileceğiniz alandır. İki panelden oluşur:</p>
-        <ul>
-            <li><strong>Sol Panel (Listeler):</strong> Oluşturduğunuz listeler. <em>(Sağ Tık: Yeniden Adlandır, Sil, Dışa Aktar)</em></li>
-            <li><strong>Sağ Panel (İçerik):</strong> Listenin içindeki videolar. <em>(Sağ Tık: Oynat, Sil)</em></li>
-        </ul>
-        <p><strong>İpucu:</strong> Arama sonuçlarında beğendiğiniz bir videoya sağ tıklayıp "Playlist'e Ekle" diyebilirsiniz.</p>
-
-        <h3>C. Ayarlar Sekmesi</h3>
-        <ul>
-            <li><strong>Dil / Language:</strong> Eklenti dilini değiştirebilirsiniz.</li>
-            <li><strong>İndirme Klasörü:</strong> Dosyaların nereye kaydedileceğini seçersiniz.</li>
-            <li><strong>Video/Ses Kalitesi:</strong> İndirme kalitesini belirlersiniz.</li>
-        </ul>
-    </div>
-
-    <div id="content-en" class="content-section" lang="en">
-        <h1>YouTube Pro Downloader - User Manual</h1>
-        <p>This add-on allows NVDA users to search on YouTube, process video or playlist links, play content, and download them in MP3/MP4 format. It also includes a local playlist manager.</p>
-
-        <h2>1. Getting Started</h2>
-        <p>After installing, you can access the interface via:</p>
-        <ul>
-            <li><strong>NVDA Tools Menu:</strong> Go to NVDA Menu -> <em>Tools</em> -> <em>YouTube Pro Downloader</em>.</li>
-            <li><strong>Shortcut Key:</strong> Assign a custom shortcut via NVDA Input Gestures menu.</li>
-        </ul>
-
-        <div class="note">
-            <strong>Important Note:</strong> <em>ffmpeg.exe</em> and <em>ffprobe.exe</em> files must be present in the <code>lib/ffmpeg</code> folder for MP3 conversion.
-        </div>
-
-        <h2>2. Tabs and Features</h2>
-        <p>Navigate tabs using <strong>CTRL+TAB</strong>:</p>
-
-        <h3>A. Search and Download Tab</h3>
-        <p>Main hub for searching and direct links.</p>
-        <ul>
-            <li><strong>Search Box:</strong> Enter a search term or paste a YouTube Link (Video/Playlist), then press <strong>Enter</strong> or click <em>Find / Fetch</em>.</li>
-            <li><strong>Results List:</strong> Shows search results or link contents.</li>
-        </ul>
-
-        <h4>List Shortcuts:</h4>
-        <ul>
-            <li><span class="keyboard-shortcut">F1:</span> Download as <strong>Audio (MP3)</strong>.</li>
-            <li><span class="keyboard-shortcut">F2:</span> Download as <strong>Video (MP4)</strong>.</li>
-            <li><span class="keyboard-shortcut">F3:</span> Announce download status.</li>
-            <li><span class="keyboard-shortcut">F4:</span> <strong>Cancel</strong> download.</li>
-            <li><span class="keyboard-shortcut">F5:</span> Announce active download count.</li>
-            <li><span class="keyboard-shortcut">App Key (Right Click):</span> Advanced options (Open in Browser, Add to Playlist, etc.).</li>
-        </ul>
-
-        <h3>B. Playlists Tab</h3>
-        <p>Manage your local library. Consists of two panels:</p>
-        <ul>
-            <li><strong>Left Panel (Lists):</strong> Your playlists. <em>(Right Click: Rename, Delete, Export)</em></li>
-            <li><strong>Right Panel (Content):</strong> Videos in the list. <em>(Right Click: Play, Delete)</em></li>
-        </ul>
-
-        <h3>C. Settings Tab</h3>
-        <ul>
-            <li><strong>Language:</strong> Change the interface language.</li>
-            <li><strong>Download Folder:</strong> Choose where files are saved.</li>
-            <li><strong>Quality Settings:</strong> Set your preferred video resolution and audio bitrate.</li>
-        </ul>
-    </div>
+    <h2>3. İpuçları ve Püf Noktaları</h2>
+    <ul>
+        <li><strong>Playlist İndirme:</strong> Arama kutusuna bir YouTube oynatma listesi linki yapıştırırsanız, program o listenin tüm videolarını sonuçlar kısmına döker. Tek tek F1/F2 ile istediklerinizi indirebilirsiniz.</li>
+        <li><strong>Arka Plan İndirme:</strong> İndirme işlemi arka planda yapılır. İndirme sürerken programı kapatmadan başka aramalar yapabilir veya NVDA ile başka işlerle uğraşabilirsiniz.</li>
+        <li><strong>Sessiz Bildirim:</strong> İndirme başladığında ve bittiğinde NVDA size sesli mesaj verir, ekstra bir pencere açılıp odaklanmanızı bozmaz.</li>
+    </ul>
 
 </body>
 </html>
