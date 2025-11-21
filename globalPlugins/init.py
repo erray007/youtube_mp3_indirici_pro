@@ -59,8 +59,12 @@ def ayarlari_yukle():
             with open(config_dosyasi, "r", encoding="utf-8") as f:
                 ayarlar.update(json.load(f))
         except: pass
-    if not os.path.exists(ayarlar["indirme_klasoru"]):
+    
+    # GÜVENLİK KONTROLÜ: Klasör yerinde mi?
+    klasor = ayarlar.get("indirme_klasoru", "")
+    if not klasor or not os.path.exists(klasor):
         ayarlar["indirme_klasoru"] = varsayilan_ayarlar["indirme_klasoru"]
+        
     return ayarlar
 
 def ayarlari_kaydet(ayarlar):
@@ -82,6 +86,7 @@ class DilYoneticisi:
             "menu_name": "YouTube Pro İndirici",
             "menu_desc": "YouTube video ve ses indirici",
             "title_main": "YouTube Pro İndirici",
+            "title_confirm": "Onay",  # YENİ EKLENDİ
             "btn_close": "Kapat",
             "err_title": "Hata",
             "msg_saved": "Ayarlar kaydedildi.",
@@ -215,7 +220,6 @@ class GuncellemeYoneticisi:
             if not sessiz: wx.CallAfter(ui.message, dil.get("upd_error"))
 
     def guncelleme_diyalogu_ac(self, yeni_surum, notlar, url):
-        # Özel bir diyalog penceresi oluşturuyoruz
         dlg = wx.Dialog(None, title=dil.get("title_main"), size=(500, 400), style=wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP)
         pnl = wx.Panel(dlg)
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -238,10 +242,9 @@ class GuncellemeYoneticisi:
         btn_update.Bind(wx.EVT_BUTTON, lambda e: dlg.EndModal(wx.ID_YES))
         btn_cancel.Bind(wx.EVT_BUTTON, lambda e: dlg.EndModal(wx.ID_NO))
         
-        # ODAKLANMA VE ÖNE GETİRME İŞLEMLERİ
-        dlg.Centre() # Ekranı ortala
-        dlg.Raise()  # Diğer pencerelerin önüne getir
-        txt_notlar.SetFocus() # İlk odaklanma metin kutusuna olsun ki NVDA okusun
+        dlg.Centre()
+        dlg.Raise()
+        txt_notlar.SetFocus()
         
         if dlg.ShowModal() == wx.ID_YES:
             dlg.Destroy()
@@ -257,8 +260,8 @@ class GuncellemeYoneticisi:
             parent=None,
             style=wx.PD_APP_MODAL | wx.PD_AUTO_HIDE | wx.PD_CAN_ABORT
         )
-        self.pd.Centre() # Progress bar da ortada çıksın
-        self.pd.Raise()  # Progress bar da öne gelsin
+        self.pd.Centre()
+        self.pd.Raise()
         threading.Thread(target=self.indir_worker, args=(url,)).start()
 
     def indir_worker(self, url):
@@ -349,13 +352,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             return
         if not os.path.exists(ffmpeg_exe):
             wx.MessageBox(f"{dil.get('err_ffmpeg')}{ffmpeg_klasoru}", dil.get("err_title"))
+            
         if hasattr(self, 'pencere') and self.pencere:
             try:
                 self.pencere.Raise()
                 self.pencere.SetFocus()
                 return
             except: pass 
-        self.pencere = AnaPencere()
+            
+        self.pencere = AnaPencere(self)
+
+    def arayuzu_yenile(self):
+        if hasattr(self, 'pencere') and self.pencere:
+            self.pencere.Destroy()
+        conf = ayarlari_yukle()
+        dil.dil_yukle(conf.get("dil", "auto"))
+        self.pencere = AnaPencere(self)
+        self.pencere.Show()
 
     def terminate(self):
         try: 
@@ -365,8 +378,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 # --- ARAYÜZ ---
 class AnaPencere(wx.Frame):
-    def __init__(self):
+    def __init__(self, plugin_instance):
         super().__init__(parent=gui.mainFrame, title=dil.get("title_main"), size=(700, 600))
+        self.plugin_instance = plugin_instance 
+        
         self.mevcut_ayarlar = ayarlari_yukle()
         self.playlistler = playlistleri_yukle()
         self.panel = wx.Panel(self)
@@ -605,10 +620,9 @@ class OynatmaListesiSekmesi(wx.Panel):
         dlg = wx.TextEntryDialog(self, dil.get("input_list_name"), dil.get("btn_new"))
         if dlg.ShowModal() == wx.ID_OK:
             ad = dlg.GetValue().strip()
-            if ad and ad not in self.ana_pencere.playlistler:
-                self.ana_pencere.playlistler[ad] = []
-                playlistleri_kaydet(self.ana_pencere.playlistler)
-                self.tazele()
+            if ad:
+                if ad not in self.ana_pencere.playlistler: self.ana_pencere.playlistler[ad] = []
+                self.ekle_pl(ad, idx)
         dlg.Destroy()
 
     def menu_sol(self, e):
@@ -645,7 +659,8 @@ class OynatmaListesiSekmesi(wx.Panel):
     def sil_liste(self, e):
         sel = self.lb_sol.GetSelection()
         ad = self.lb_sol.GetString(sel)
-        if wx.MessageBox(dil.get("msg_confirm_delete"), dil.get("err_title"), wx.YES_NO)==wx.YES:
+        # DEĞİŞİKLİK BURADA: Başlığı "Onay" yaptık, hata değil.
+        if wx.MessageBox(dil.get("msg_confirm_delete"), dil.get("title_confirm"), wx.YES_NO | wx.ICON_QUESTION)==wx.YES:
             del self.ana_pencere.playlistler[ad]
             playlistleri_kaydet(self.ana_pencere.playlistler)
             self.tazele()
@@ -751,6 +766,7 @@ class AyarlarSekmesi(wx.Panel):
         update_manager.kontrol_et(sessiz=False)
 
     def kaydet(self, event):
+        eski_dil = self.ana_pencere.mevcut_ayarlar.get("dil", "auto")
         yeni = {
             "indirme_klasoru": self.picker.GetPath(),
             "arama_sonuc_sayisi": self.spin.GetValue(),
@@ -761,7 +777,11 @@ class AyarlarSekmesi(wx.Panel):
         }
         ayarlari_kaydet(yeni)
         self.ana_pencere.mevcut_ayarlar = yeni
-        wx.MessageBox(dil.get("msg_saved"), dil.get("title_main"))
+        
+        if eski_dil != yeni["dil"]:
+            wx.CallAfter(self.ana_pencere.plugin_instance.arayuzu_yenile)
+        else:
+            wx.MessageBox(dil.get("msg_saved"), dil.get("title_main"))
 
 # --- İNDİRME MANTIĞI ---
 def indirme_baslatici(pencere, url, baslik, format_override=0):
@@ -790,7 +810,16 @@ def progress_hook(d):
 def arka_plan_indir(url, ayarlar, fmt_kodu, baslik):
     try:
         klasor = ayarlar["indirme_klasoru"]
-        if not os.path.exists(klasor): os.makedirs(klasor)
+        # KLASÖR OLUŞTURMA / KONTROL ETME (GELİŞMİŞ GÜVENLİK)
+        try:
+            if not os.path.exists(klasor):
+                os.makedirs(klasor)
+        except:
+            # Eğer seçili klasör oluşturulamazsa (örn: sürücü yok), varsayılana dön
+            klasor = varsayilan_ayarlar["indirme_klasoru"]
+            if not os.path.exists(klasor):
+                os.makedirs(klasor)
+
         if ffmpeg_klasoru not in os.environ["PATH"]: os.environ["PATH"] += os.pathsep + ffmpeg_klasoru
         if not os.path.exists(ffmpeg_exe): raise Exception(dil.get("err_ffmpeg"))
         vid_idx = ayarlar.get("video_kalitesi_idx", 0)
